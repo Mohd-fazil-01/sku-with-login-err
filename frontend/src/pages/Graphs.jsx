@@ -157,21 +157,21 @@
 
 
 
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom"; // navigate ki ab zaroorat nahi hai
+import Header from "../components/Header"; // ✅ Header Import
 
 // Imports
 import BarChartFilter from "../components/charts/BarChartFilter";
 import PieChartFilter from "../components/charts/PieChartFilter";
 import LineChartFilter from "../components/charts/LineChartFilter";
 import DoughnutChartFilter from "../components/charts/DoughnutChartFilter";
-import AdvancedAnalytics from "../components/charts/AdvancedAnalytics"; // ✅ Naya Import
+import AdvancedAnalytics from "../components/charts/AdvancedAnalytics";
 
 export default function Graphs() {
   const [products, setProducts] = useState([]);
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // Not needed anymore
 
   useEffect(() => {
     fetchData();
@@ -179,7 +179,10 @@ export default function Graphs() {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get("http://localhost:7000/api/products");
+      // Agar aapke paas 'api' instance hai to use use karein, warna axios theek hai
+      const res = await axios.get("http://localhost:7000/api/products", {
+         withCredentials: true 
+      });
       setProducts(res.data);
     } catch (error) {
       console.error("Error fetching data", error);
@@ -187,99 +190,105 @@ export default function Graphs() {
   };
 
   return (
-    <div style={styles.pageContainer}>
+    <div style={styles.container}>
       
-      {/* HEADER SECTION */}
-      <div style={styles.header}>
-        <button onClick={() => navigate("/dashboard")} style={styles.backBtn}>
-          ⬅ Dashboard
-        </button>
-        <h1 style={styles.pageTitle}>📊 Inventory Analytics</h1>
-        <p style={styles.pageSubtitle}>Visual insights and deep dive into stock data</p>
-      </div>
+      {/* ✅ HEADER ADDED (Full Width) */}
+      <Header />
 
-      <div style={styles.gridContainer}>
+      {/* MAIN CONTENT (Centered & Padded) */}
+      <div style={styles.mainContent}>
         
-        {/* 1️⃣ ADVANCED ANALYTICS (Full Width) */}
-        <div style={{ ...styles.card, gridColumn: "1 / -1" }}>
-          <AdvancedAnalytics data={products} />
+        {/* Title Section */}
+        <div style={styles.titleSection}>
+          <h1 style={styles.pageTitle}>📊 Inventory Analytics</h1>
+          <p style={styles.pageSubtitle}>Visual insights and deep dive into stock data</p>
         </div>
 
-        {/* 2️⃣ DOUGHNUT CHART (Stock Status) */}
-        <div style={styles.card}>
-           <DoughnutChartFilter data={products} />
-        </div>
+        {/* GRAPHS GRID */}
+        <div style={styles.gridContainer}>
+          
+          {/* 1️⃣ ADVANCED ANALYTICS (Full Width) */}
+          <div style={{ ...styles.card, gridColumn: "1 / -1" }}>
+            <AdvancedAnalytics data={products} />
+          </div>
 
-        {/* 3️⃣ BAR CHART (Categorical Data) */}
-        <div style={styles.card}>
-          <BarChartFilter data={products} />
-        </div>
+          {/* 2️⃣ DOUGHNUT CHART (Stock Status) */}
+          <div style={styles.card}>
+             <DoughnutChartFilter data={products} />
+          </div>
 
-        {/* 4️⃣ PIE CHART (Distribution) */}
-        <div style={styles.card}>
-          <PieChartFilter data={products} />
-        </div>
+          {/* 3️⃣ BAR CHART (Categorical Data) */}
+          <div style={styles.card}>
+            <BarChartFilter data={products} />
+          </div>
 
-        {/* 5️⃣ LINE CHART (Trends) */}
-        <div style={styles.card}>
-          <LineChartFilter data={products} />
-        </div>
+          {/* 4️⃣ PIE CHART (Distribution) */}
+          <div style={styles.card}>
+            <PieChartFilter data={products} />
+          </div>
 
+          {/* 5️⃣ LINE CHART (Trends) */}
+          <div style={styles.card}>
+            <LineChartFilter data={products} />
+          </div>
+
+        </div>
       </div>
     </div>
   );
 }
 
-// ✨ Professional Dashboard Styles
+// ✨ Consistent Styles (Matching Home & AddProduct)
 const styles = {
-  pageContainer: {
+  // Pura Page Wrapper
+  container: {
     minHeight: "100vh",
-    background: "#f3f4f6", // Light grey clean background
-    padding: "30px",
+    backgroundColor: "#f3f4f6", // Light grey clean background
     fontFamily: "'Segoe UI', sans-serif",
+    display: "flex",
+    flexDirection: "column",
   },
-  header: {
-    maxWidth: "1200px",
-    margin: "0 auto 30px auto",
+
+  // Content Area (Header ke neeche wala hissa)
+  mainContent: {
+    padding: "30px 20px",
+    width: "100%",
+    maxWidth: "1200px", // Graphs ke liye thoda chauda container rakha hai
+    margin: "0 auto",
+    boxSizing: "border-box",
+  },
+
+  // Title Section
+  titleSection: {
+    marginBottom: "30px",
     textAlign: "center",
-  },
-  backBtn: {
-    background: "transparent",
-    color: "#1976D2",
-    border: "1px solid #1976D2",
-    padding: "8px 16px",
-    borderRadius: "20px",
-    cursor: "pointer",
-    fontWeight: "600",
-    marginBottom: "15px",
-    transition: "0.2s",
   },
   pageTitle: {
     margin: "0",
     fontSize: "28px",
-    color: "#1f2937",
+    color: "#1e293b",
     fontWeight: "700",
   },
   pageSubtitle: {
     margin: "5px 0 0 0",
-    color: "#6b7280",
+    color: "#64748b",
     fontSize: "15px",
   },
   
-  // GRID SYSTEM
+  // Grid System
   gridContainer: {
-    maxWidth: "1200px",
-    margin: "0 auto",
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))", // Responsive Columns
     gap: "25px",
   },
+  
+  // Graph Card Style
   card: {
     background: "#ffffff",
     borderRadius: "16px",
     padding: "25px",
     boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
     transition: "transform 0.2s",
-    border: "1px solid #f1f5f9",
+    border: "1px solid #e2e8f0",
   },
 };

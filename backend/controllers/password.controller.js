@@ -11,6 +11,23 @@ export const forgotPassword = async (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
 
+
+  // 🛑 FREEZE CHECK ADDED HERE
+    // if (user.isFrozen) {
+    //   return res.status(403).json({ 
+    //     message: "Your account is Frozen due to multiple failed login attempts. Contact Admin to unlock it." 
+    //   });
+    // }
+
+    // 🛑 LOGIC: Agar user frozen hai AUR wo admin NAHI hai, tabhi roko
+    // Admin ko permission hai forgot password karne ki taaki wo system se bahar na ho
+    if (user.isFrozen && user.userType !== 'admin') {
+      return res.status(403).json({ 
+        message: "Your account is Frozen. Please contact the system owner." 
+      });
+    }
+
+
   const code = Math.floor(100000 + Math.random() * 900000).toString();
 
   user.resetCode = code;
@@ -44,19 +61,45 @@ export const verifyCode = async (req, res) => {
 };
 
 // -------------------- 3. RESET PASSWORD --------------------
+// export const resetPassword = async (req, res) => {
+//   const { email, password } = req.body;
+
+//   const user = await User.findOne({ email });
+//   if (!user) return res.status(404).json({ message: "User not found" });
+
+//   const salt = await bcrypt.genSalt(10);
+//   user.password = await bcrypt.hash(password, salt);
+
+//   user.resetCode = undefined;
+//   user.resetCodeExpire = undefined;
+
+//   await user.save();
+
+//   res.json({ message: "Password reset successful" });
+// };
+
+
+// Step 2: resetPassword function mein login attempts reset karein
 export const resetPassword = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
 
-  const user = await User.findOne({ email });
-  if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-  const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(password, salt);
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+    
+    // ✅ Password reset hote hi attempts 0 aur frozen false kar dein
+    user.failedLoginAttempts = 0;
+    user.isFrozen = false;
+    
+    user.resetCode = undefined;
+    user.resetCodeExpire = undefined;
+    await user.save();
 
-  user.resetCode = undefined;
-  user.resetCodeExpire = undefined;
-
-  await user.save();
-
-  res.json({ message: "Password reset successful" });
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };

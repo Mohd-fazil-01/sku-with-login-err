@@ -443,7 +443,7 @@ function ProductList({ products }) {
           <table style={styles.table}>
             <thead>
               <tr>
-                <th style={styles.th}>#</th>
+                <th style={styles.th}>S no.</th>
                 <th style={styles.th}>Img</th>
                 <th style={styles.th}>Name</th>
                 <th style={styles.th}>SKU</th>

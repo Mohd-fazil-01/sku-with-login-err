@@ -70,6 +70,46 @@ export const getCurrentUser = async (req, res) => {
   }
 };
 
+
+
+
+
+
+// ✅ NEW: Toggle User Freeze Status (Admin Only)
+export const toggleUserFreeze = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Status palat do (Freeze <-> Unfreeze)
+    user.isFrozen = !user.isFrozen;
+    
+    // Agar Unfreeze kar rahe hain, to attempts bhi 0 kar do
+    if (!user.isFrozen) {
+      user.failedLoginAttempts = 0;
+    }
+
+    await user.save();
+
+    res.status(200).json({ 
+      message: user.isFrozen ? "User Frozen" : "User Unfrozen successfully", 
+      user 
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+
+
+
 // 2️⃣ Get All Users (Admin Only)
 export const getAllUsers = async (req, res) => {
   try {

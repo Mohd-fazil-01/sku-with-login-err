@@ -520,7 +520,7 @@ export default function SkuUpdate({ onUpdated, prefillProduct }) {
 // ✨ UPDATED COMPACT STYLES
 const styles = {
   card: {
-    padding: "12px", // Kam kiya
+    padding: "5px", // Kam kiya
     backgroundColor: "#fff",
     borderRadius: "8px",
     fontFamily: "'Segoe UI', sans-serif",

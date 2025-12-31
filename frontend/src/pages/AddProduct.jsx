@@ -216,17 +216,28 @@
 //   },
 // };
 
+
+
+
+
+
+
+
+
+
+
+
 import React from "react";
 import axios from "axios";
 import ProductForm from "../components/ProductForm";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast"; // 👈 Library import ki
+import toast from "react-hot-toast";
+import Header from "../components/Header";
 
 export default function AddProduct() {
   const navigate = useNavigate();
 
   const saveProduct = async (data) => {
-    // Loading toast start kar sakte hain (Optional but cool)
     const toastId = toast.loading("Saving Product...");
 
     try {
@@ -237,21 +248,17 @@ export default function AddProduct() {
       if (res.status === 201) {
         const newSku = res.data.sku;
 
-        // ✅ Success Toast (Loading wala replace ho jayega)
         toast.success("Product Added Successfully!", {
-          id: toastId, // Purane toast ko update karega
+          id: toastId,
           duration: 3000,
         });
 
-        // Redirect after delay
         setTimeout(() => {
           navigate(`/generate-barcode/${newSku}`);
         }, 1500);
       }
     } catch (err) {
       console.error("Add Product Error:", err);
-      
-      // ❌ Error Toast
       toast.error(err.response?.data?.message || "Failed to add product", {
         id: toastId,
       });
@@ -259,65 +266,79 @@ export default function AddProduct() {
   };
 
   return (
-    <div style={styles.pageContainer}>
+    // 1️⃣ Outer Container (Full Layout)
+    <div style={styles.container}>
       
-      {/* Ab yahan koi custom Banner div lagane ki zarurat nahi hai */}
+      {/* ✅ Header ab sabse upar aur full width rahega */}
+      <Header />
 
-      {/* Header Section */}
-      <div style={styles.headerWrapper}>
-        <button 
-          onClick={() => navigate("/dashboard")} 
-          style={styles.backBtn}
-        >
-          <span style={{marginRight: "8px"}}>⬅</span> Back to Dashboard
-        </button>
-        <h1 style={styles.title}>Add New Product</h1>
-        <p style={styles.subtitle}>Enter product details to add to inventory.</p>
-      </div>
+      {/* 2️⃣ Main Content (Isme padding aur center alignment hai) */}
+      <main style={styles.mainContent}>
+        
+        {/* Page Title Section */}
+        <div style={styles.headerWrapper}>
+           <h1 style={styles.title}>Add New Product</h1>
+           <p style={styles.subtitle}>Enter product details to add to inventory.</p>
+        </div>
 
-      {/* Form Card */}
-      <div style={styles.card}>
-        <ProductForm
-          onSubmit={saveProduct}
-          onCancel={() => navigate("/dashboard")}
-        />
-      </div>
+        {/* Form Card */}
+        <div style={styles.card}>
+          <ProductForm
+            onSubmit={saveProduct}
+            onCancel={() => navigate("/add-product")}
+          />
+        </div>
+
+      </main>
     </div>
   );
 }
 
-// Styles wahi purane wale (bas SuccessBanner/ErrorBanner hata diya)
+// ✨ Fixed Styles (Home page jaisa structure)
 const styles = {
-  pageContainer: {
+  // Pura page container (Background color yahan hai)
+  container: {
     minHeight: "100vh",
     backgroundColor: "#f3f4f6",
-    padding: "40px 20px",
     fontFamily: "'Segoe UI', sans-serif",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
   },
-  headerWrapper: { width: "100%", maxWidth: "800px", marginBottom: "20px" },
-  backBtn: {
-    display: "inline-flex",
-    alignItems: "center",
-    padding: "10px 20px",
-    backgroundColor: "#ffffff",
-    border: "1px solid #e5e7eb",
-    borderRadius: "8px",
-    color: "#374151",
-    fontSize: "14px",
-    fontWeight: "600",
-    cursor: "pointer",
-    marginBottom: "20px",
-    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+
+  // Sirf Content wala hissa (Header ke neeche)
+  mainContent: {
+    padding: "30px 20px",
+    width: "100%",
+    maxWidth: "800px", // Form jyada faila hua na dikhe isliye width control ki
+    margin: "0 auto",  // Center karne ke liye
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center", // Content center karne ke liye
+    boxSizing: "border-box",
   },
-  title: { fontSize: "28px", fontWeight: "700", color: "#111827", margin: "0 0 5px 0" },
-  subtitle: { fontSize: "15px", color: "#6b7280", margin: 0 },
+
+  headerWrapper: { 
+    width: "100%", 
+    textAlign: "left", // Title left me acha lagta hai form ke upar
+    marginBottom: "25px" 
+  },
+
+  title: { 
+    fontSize: "28px", 
+    fontWeight: "700", 
+    color: "#1e293b", // Darker text matches Home theme
+    margin: "0 0 5px 0" 
+  },
+  
+  subtitle: { 
+    fontSize: "15px", 
+    color: "#64748b", 
+    margin: 0 
+  },
+
   card: {
     backgroundColor: "#ffffff",
     width: "100%",
-    maxWidth: "800px",
     padding: "40px",
     borderRadius: "12px",
     boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",

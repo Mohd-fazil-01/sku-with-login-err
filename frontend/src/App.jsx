@@ -132,26 +132,171 @@
 
 
 
+// import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+// import Login from "./pages/Login";
+// import Signup from "./pages/Signup";
+// import ForgotPassword from "./pages/ForgotPassword";
+// import Dashboard from "./pages/Dashboard";
+// import ProtectedRoute from "./components/ProtectedRoute";
+// import Home from "./pages/Home";
+// import AddProduct from "./pages/AddProduct";
+// import CreateUser from "./pages/CreateUser";
+// import Graphs from "./pages/Graphs";
+// import BarcodeGenPage from "./pages/BarcodeGenPage";
+// import ProductDetails from "./pages/ProductDetails";
+// import { Toaster } from 'react-hot-toast';
+// import UserManagement from "./pages/UserManagement";
+
+
+// export default function App() {
+//   return (
+//     <BrowserRouter>
+//       {/* Isko sabse upar laga de */}
+//       <Toaster
+//         position="top-center"
+//         reverseOrder={false}
+//         toastOptions={{
+//           style: {
+//             fontSize: '14px',
+//             fontWeight: 'bold',
+//             borderRadius: '8px',
+//             background: '#333',
+//             color: '#fff',
+//           },
+//         }}
+//       />
+//       <Routes>
+//         {/* ----- PUBLIC ROUTES ----- */}
+//         <Route path="/" element={<Login />} />
+//         <Route path="/signup" element={<Signup />} />
+//         <Route path="/forgot-password" element={<ForgotPassword />} />
+
+//         {/* ----- PROTECTED ROUTES (Using Cookie Auth) ----- */}
+
+//         {/* Home/Dashboard Page */}
+//         <Route
+//           path="/dashboard"
+//           element={
+//             <ProtectedRoute>
+//               <Home />
+//             </ProtectedRoute>
+//           }
+//         />
+
+//         {/* Product Management */}
+//         <Route
+//           path="/add-product"
+//           element={
+//             <ProtectedRoute>
+//               <AddProduct />
+//             </ProtectedRoute>
+//           }
+//         />
+
+//         {/* User Management */}
+//         <Route
+//           path="/create-user"
+//           element={
+//             <ProtectedRoute>
+//               <CreateUser />
+//             </ProtectedRoute>
+//           }
+//         />
+
+//         {/* Analytics/Graphs */}
+//         <Route
+//           path="/graphs"
+//           element={
+//             <ProtectedRoute>
+//               <Graphs />
+//             </ProtectedRoute>
+//           }
+//         />
+//         {/* 👇 BARCODEGENPAGE ROUTE */}
+//         <Route
+//           path="/generate-barcode/:sku"
+//           element={
+//             <ProtectedRoute>
+//               <BarcodeGenPage />
+//             </ProtectedRoute>
+//           }
+//         />
+//         <Route
+//           path="/product/:id"
+//           element={
+//             <ProtectedRoute>
+//               <ProductDetails />
+//             </ProtectedRoute>
+//           }
+//         />
+
+//         // ... Routes ke andar add karo
+//         <Route
+//           path="/users"
+//           element={
+//             <ProtectedRoute>
+//               <UserManagement />
+//             </ProtectedRoute>
+//           }
+//         />
+
+//         {/* 404 Fallback: Agar galat URL ho toh Login ya Dashboard par bhej do */}
+//         <Route path="*" element={<Navigate to="/" />} />
+
+//       </Routes>
+//     </BrowserRouter>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from 'react-hot-toast';
+
+// Pages
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import AddProduct from "./pages/AddProduct";
 import CreateUser from "./pages/CreateUser";
 import Graphs from "./pages/Graphs";
 import BarcodeGenPage from "./pages/BarcodeGenPage";
 import ProductDetails from "./pages/ProductDetails";
-import { Toaster } from 'react-hot-toast';
 import UserManagement from "./pages/UserManagement";
 
+// Component
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
   return (
     <BrowserRouter>
-      {/* Isko sabse upar laga de */}
       <Toaster
         position="top-center"
         reverseOrder={false}
@@ -168,12 +313,12 @@ export default function App() {
       <Routes>
         {/* ----- PUBLIC ROUTES ----- */}
         <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        {/* <Route path="/signup" element={<Signup />} /> */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
-        {/* ----- PROTECTED ROUTES (Using Cookie Auth) ----- */}
+        {/* ----- PROTECTED ROUTES ----- */}
 
-        {/* Home/Dashboard Page */}
+        {/* 1. SABKE LIYE (Bas login hona chahiye) */}
         <Route
           path="/dashboard"
           element={
@@ -182,45 +327,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
-        {/* Product Management */}
-        <Route
-          path="/add-product"
-          element={
-            <ProtectedRoute>
-              <AddProduct />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* User Management */}
-        <Route
-          path="/create-user"
-          element={
-            <ProtectedRoute>
-              <CreateUser />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Analytics/Graphs */}
-        <Route
-          path="/graphs"
-          element={
-            <ProtectedRoute>
-              <Graphs />
-            </ProtectedRoute>
-          }
-        />
-        {/* 👇 BARCODEGENPAGE ROUTE */}
-        <Route
-          path="/generate-barcode/:sku"
-          element={
-            <ProtectedRoute>
-              <BarcodeGenPage />
-            </ProtectedRoute>
-          }
-        />
+        
         <Route
           path="/product/:id"
           element={
@@ -230,17 +337,55 @@ export default function App() {
           }
         />
 
-        // ... Routes ke andar add karo
+        {/* 2. ADMIN & SUPERUSER ONLY (Product Management) */}
+        <Route
+          path="/add-product"
+          element={
+            <ProtectedRoute allowedRoles={["admin", "superuser"]}>
+              <AddProduct />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/generate-barcode/:sku"
+          element={
+            <ProtectedRoute allowedRoles={["admin", "superuser"]}>
+              <BarcodeGenPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/graphs"
+          element={
+            <ProtectedRoute allowedRoles={["admin", "superuser","user"]}>
+              <Graphs />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 3. SIRF ADMIN ONLY (User Management) */}
+        {/* Naya user banana ya delete karna sirf 'admin' karega */}
+        <Route
+          path="/create-user"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <CreateUser />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/users"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["admin"]}>
               <UserManagement />
             </ProtectedRoute>
           }
         />
 
-        {/* 404 Fallback: Agar galat URL ho toh Login ya Dashboard par bhej do */}
+        {/* 404 Fallback */}
         <Route path="*" element={<Navigate to="/" />} />
 
       </Routes>
